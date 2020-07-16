@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rupert UX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+    <style>
+        body {
+            width: 100%;
+            min-height: 100vh;
+                
+            display: flex;
+            justify-content: center;
+            align-items: center;
+                
+            margin: 0;
+            background-color: rgb(220, 220, 220);
+        }
+
+        #containerOne,
+        #containerTwo,
+        #containerThree,
+        #containerFour {
+            perspective: 40px;
+        }
+
+        #innerOne,
+        #innerTwo,
+        #innerThree,
+        #innerFour {
+            width: 20em;
+            height: 18em;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        .size {
+            width: 50vw;
+            height: 30vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+          <div class="col">
+            <h1>RUPERT PATERSON</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col size">
+            <div id="containerOne">
+                <div id="innerOne"></div>
+            </div>
+          </div>
+          <div class="col size">
+            <div id="containerTwo">
+                <div id="innerTwo"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col size">
+              <div id="containerThree">
+                  <div id="innerThree"></div>
+              </div>
+            </div>
+            <div class="col size">
+              <div id="containerFour">
+                  <div id="innerFour"></div>
+              </div>
+            </div>
+          </div>
+    </div>
+</body>
+<script>
+
+    class containerAnimate {
+        constructor (container, inner) {
+
+            this.container = container;
+            this.inner = inner;
+
+            var containerOne = document.getElementById(`${container}`);
+            var innerOne = document.getElementById(`${inner}`);
+
+            var mouse = {
+                _x: 0,
+                _y: 0,
+                x: 0,
+                y: 0,
+                updatePosition: function(event) {
+                    var e = event || window.event;
+                    this.x = e.clientX - this._x;
+                    this.y = (e.clientY - this._y) * -1;
+                },
+                setOrigin: function(e) {
+                    this._x = e.offsetLeft + Math.floor(e.offsetWidth/2);
+                    this._y = e.offsetTop + Math.floor(e.offsetHeight/2);
+                },
+                show: function() { return '(' + this.x + ', ' + this.y + ')'; }
+            }
+
+            var update = function(event) {
+                mouse.updatePosition(event);
+                updateTransformStyle(
+                    (mouse.y / innerOne.offsetHeight/2).toFixed(2),
+                    (mouse.x / innerOne.offsetWidth/2).toFixed(2)
+                );
+            };
+
+            var updateTransformStyle = function(x, y) {
+                var style = "rotateX(" + x + "deg) rotateY(" + y + "deg)";
+                innerOne.style.transform = style;
+                innerOne.style.webkitTransform = style;
+                innerOne.style.mozTransform = style;
+                innerOne.style.msTransform = style;
+                innerOne.style.oTransform = style;
+            };
+
+            mouse.setOrigin(containerOne);
+
+            var counter = 0;
+            var updateRate = 10;
+
+            var isTimeToUpdate = function() {
+                return counter++ % updateRate === 0;
+            };
+
+            isTimeToUpdate()
+                    
+            var onMouseEnterHandler = function(event) {
+                update(event);
+            };
+            var onMouseLeaveHandler = function() {
+                innerOne.style = "";
+            };
+            var onMouseMoveHandler = function(event) {
+                if (isTimeToUpdate()) {
+                    update(event);
+                }
+            };
+
+            containerOne.onmouseenter = onMouseEnterHandler;
+            containerOne.onmouseleave = onMouseLeaveHandler;
+            containerOne.onmousemove = onMouseMoveHandler;
+
+        }
+    }
+
+    const IamContainerOne = new containerAnimate("containerOne", "innerOne");
+    const IamContainerTwo = new containerAnimate("containerTwo", "innerTwo");
+    const IamContainerThree = new containerAnimate("containerThree", "innerThree");
+    const IamContainerFour = new containerAnimate("containerFour", "innerFour");
+    
+
+</script>
+</html>
